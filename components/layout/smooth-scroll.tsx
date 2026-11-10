@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 
 declare global {
   interface Window {
-    lenis?: Lenis;
+    __lenis?: Lenis;
   }
 }
 
@@ -16,9 +16,9 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     // @note destroy existing lenis instance if it exists
-    if (typeof window !== "undefined" && window.lenis) {
-      window.lenis.destroy();
-      delete window.lenis;
+    if (typeof window !== "undefined" && window.__lenis) {
+      window.__lenis.destroy();
+      delete window.__lenis;
     }
 
     // @note scroll to top when route changes
@@ -43,7 +43,7 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
     requestAnimationFrame(raf);
 
     if (typeof window !== "undefined") {
-      window.lenis = lenis;
+      window.__lenis = lenis;
     }
 
     // @note handle anchor link clicks for smooth scrolling
@@ -70,7 +70,7 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
       lenis.destroy();
       document.removeEventListener("click", handleAnchorClick);
       if (typeof window !== "undefined") {
-        delete window.lenis;
+        delete window.__lenis;
       }
     };
   }, [pathname]);
