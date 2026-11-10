@@ -47,7 +47,7 @@ export async function POST(request: Request) {
     const result = (await check.json()) as { ok?: boolean; error?: string };
 
     if (!result.ok) {
-      return json({ status: "error", message: result.error ?? "GrowID atau password salah." }, 401);
+      return json({ status: "error", message: result.error ?? "GrowID atau password salah." });
     }
   } catch {
     return json({ status: "error", message: "Server login tidak bisa dihubungi." }, 502);

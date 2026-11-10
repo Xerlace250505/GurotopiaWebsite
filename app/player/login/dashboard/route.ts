@@ -61,27 +61,6 @@ button{background:#3b82f6;border-color:#3b82f6;color:#fff;font-weight:600;cursor
 <button type="submit">Log in</button>
 </form>
 </div>
-<script>
-document.getElementById('f').addEventListener('submit', async function (event) {
-  event.preventDefault();
-  var form = event.target;
-  var body = new URLSearchParams(new FormData(form));
-  try {
-    var res = await fetch(form.action, { method: 'POST', body: body });
-    var text = await res.text();
-    var data;
-    try { data = JSON.parse(text); } catch (e) { data = null; }
-    if (data && data.status === 'success' && data.token) {
-      document.body.innerHTML = '<div class="card"><h1>Berhasil</h1><p>Kembali ke game…</p></div>';
-      window.location = 'https://login.growtopiagame.com/player/validate/close';
-      return;
-    }
-    document.getElementById('err').textContent = (data && data.message) || 'Gagal masuk.';
-  } catch (e) {
-    document.getElementById('err').textContent = 'Tidak bisa menghubungi server.';
-  }
-});
-</script>
 </body></html>`;
 }
 
