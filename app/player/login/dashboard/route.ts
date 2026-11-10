@@ -49,17 +49,25 @@ function serverField(list: { name: string; port: number }[]): string {
 </div>`;
 }
 
-async function render(token: string): Promise<string> {
+async function render(token: string, valKey: string): Promise<string> {
   const template = await readFile(TEMPLATE, "utf8");
   const list = await servers();
 
-  /* sisipkan pilihan server tepat setelah input _token, di kedua form */
+  const hidden = `${valKey ? `<input type="hidden" name="valKey" value="${escapeHtml(valKey)}">` : ""}`;
+
+  /* sisipkan pilihan server + valKey tepat setelah input _token, di kedua form */
   const withServers = template.replace(
     /(<input name="_token" type="hidden" value="\{\{ data \}\}">)/g,
-    `$1\n${serverField(list)}`,
+    `$1\n${hidden}\n${serverField(list)}`,
   );
 
   return withServers.replace(/\{\{ data \}\}/g, token);
+}
+
+function escapeHtml(value: string): string {
+  return String(value ?? "").replace(/[&<>"']/g, (c) =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c] as string),
+  );
 }
 
 function respond(html: string) {
@@ -70,9 +78,11 @@ function respond(html: string) {
 
 export async function POST(request: Request) {
   const token = Buffer.from(await extractClientData(request)).toString("base64");
-  return respond(await render(token));
+  const valKey = new URL(request.url).searchParams.get("valKey") ?? "";
+  return respond(await render(token, valKey));
 }
 
-export async function GET() {
-  return respond(await render(""));
+export async function GET(request: Request) {
+  const valKey = new URL(request.url).searchParams.get("valKey") ?? "";
+  return respond(await render("", valKey));
 }

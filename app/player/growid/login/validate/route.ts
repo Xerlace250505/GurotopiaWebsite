@@ -54,9 +54,12 @@ export async function POST(request: Request) {
   }
 
   const reg = email ? 1 : 0;
+  const valKey = (form.get("valKey") ?? "").trim();
+  const suffix = valKey ? `&valKey=${encodeURIComponent(valKey)}` : "";
+
   const payload = email
-    ? `_token=${clientToken}&growId=${growId}&password=${password}&email=${email}&reg=1&server=${server}`
-    : `_token=${clientToken}&growId=${growId}&password=${password}&reg=0&server=${server}`;
+    ? `_token=${clientToken}&growId=${growId}&password=${password}&email=${email}&reg=1&server=${server}${suffix}`
+    : `_token=${clientToken}&growId=${growId}&password=${password}&reg=0&server=${server}${suffix}`;
 
   return json({
     status: "success",
